@@ -155,9 +155,6 @@ var prompt = require('prompt');
  //
  prompt.start();
 
- //
- // Get two properties from the user: username and email
- //
  prompt.get(['newprofs', 'newstudents', "newdins"], function (err, result) {
    //
    // Log the results.
