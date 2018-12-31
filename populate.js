@@ -98,6 +98,51 @@ function postStudent(){
     });
 }
 
+async function getDinnerID(){
+  try {
+    let res = await axios.get(URL+"/dinners");
+    profID = res.data[getRandomInt(res.data.length)].id;
+    return profID;
+  }
+   catch (err) {
+       console.error(err);
+  }
+}
+
+async function getStudentID(){
+  try {
+    let res = await axios.get(URL+"/students");
+    profID = res.data[getRandomInt(res.data.length)].netID;
+    return profID;
+  }
+   catch (err) {
+       console.error(err);
+  }
+}
+
+// POST new applications to random dinners with random existing students
+async function postApplication(){
+
+  // Get random dinner IDs and Students IDs from the database
+  let randomDinnerID = await getDinnerID();
+  let randomStudentID = await getStudentID();
+  // console.log("ID: " + randomProfessorID);
+  console.log(randomDinnerID);
+  console.log(randomStudentID);
+  axios.post(URL+ '/application/register',
+      {
+        interest: faker.lorem.paragraph(),
+      	studentID: randomStudentID,
+        dinnerID: randomDinnerID
+    })
+    .then(function (response) {
+      console.log(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
 ////////////////////////////////////
 // PRINT ALL USERS IN THE DB
 function printUsers(){
@@ -153,9 +198,10 @@ var prompt = require('prompt');
  //
  // Start the prompt
  //
+ console.log("Please input the amount of new objects you wish to create:");
  prompt.start();
 
- prompt.get(['newprofs', 'newstudents', "newdins"], function (err, result) {
+ prompt.get(['newprofs', 'newstudents', "newdins", "newapps"], function (err, result) {
    //
    // Log the results.
    //
@@ -163,6 +209,7 @@ var prompt = require('prompt');
    console.log('  New Professors To Create: ' + result.newprofs);
    console.log('  New Students to Create: ' + result.newstudents);
    console.log("  New Dinners to Create: " + result.newdins);
+   console.log("  New Dinners to Create: " + result.newapps);
 
    for(var i = 0; i < result.newprofs;i++){
      postProfessor();
@@ -172,6 +219,9 @@ var prompt = require('prompt');
    }
    for(var i = 0; i < result.newdins;i++){
      postDinner();
+   }
+   for(var i = 0; i < result.newapps; i++){
+     postApplication()
    }
 
  });
